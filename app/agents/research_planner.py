@@ -1,9 +1,10 @@
 from app.domain.schemas import OpenQuestion
+from app.domain.deep_research import required_facets_for_idea
 
 
 class ResearchPlanner:
     def generate_questions(self, idea: str) -> list[OpenQuestion]:
-        return [
+        questions = [
             OpenQuestion(
                 question=f"Quais usuarios sentem dor suficiente para pagar por: {idea}?",
                 criticality=5,
@@ -30,4 +31,13 @@ class ResearchPlanner:
                 impact_on_mvp="Define arquitetura e plano de mitigacao.",
             ),
         ]
+        questions.extend(
+            OpenQuestion(
+                question=f"Como a faceta '{facet.name}' muda o escopo, os dados e o MVP?",
+                criticality=5 if index < 3 else 4,
+                impact_on_mvp=facet.description,
+            )
+            for index, facet in enumerate(required_facets_for_idea(idea))
+        )
 
+        return questions

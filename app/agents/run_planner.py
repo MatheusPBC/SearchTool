@@ -84,6 +84,12 @@ class RunPlanner:
             objective_parts.append("Buscar evidencia para hipoteses fracas")
         if any("concorrente" in blocker.lower() for blocker in report.blockers):
             objective_parts.append("Analisar concorrentes relevantes")
+        if any("faceta critica" in blocker.lower() for blocker in report.blockers):
+            objective_parts.append("Aprofundar facetas de dominio sem cobertura")
+        if any("fontes concretas" in blocker.lower() for blocker in report.blockers):
+            objective_parts.append("Buscar mais fontes concretas e diversas")
+        if any("github" in blocker.lower() or "repositorio" in blocker.lower() for blocker in report.blockers):
+            objective_parts.append("Pesquisar repositorios e implementacoes abertas")
         if not objective_parts:
             objective_parts.append("Revisar evidencias e confirmar criterios de finalizacao")
 
@@ -98,6 +104,15 @@ class RunPlanner:
             )
         if report.blockers:
             rationale_parts.append("Blockers atuais impedem finalizacao do projeto.")
+        missing_facets = [
+            blocker
+            for blocker in report.blockers
+            if "faceta critica" in blocker.lower()
+        ]
+        if missing_facets:
+            rationale_parts.append(
+                f"{len(missing_facets)} faceta(s) de dominio ainda nao tem cobertura suficiente."
+            )
 
         return RunPlan(
             objective="; ".join(objective_parts),
@@ -171,4 +186,3 @@ def _run_plan_schema() -> dict:
         },
         "required": ["objective", "question_ids", "rationale", "targeted_blockers"],
     }
-

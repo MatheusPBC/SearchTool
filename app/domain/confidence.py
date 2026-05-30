@@ -1,4 +1,5 @@
 from app.domain.schemas import Finding, Hypothesis, OpenQuestion, Source
+from app.domain.deep_research import deep_research_blockers, evaluate_research_coverage
 
 
 def calculate_confidence(
@@ -36,8 +37,11 @@ def calculate_confidence(
 
 
 def find_completion_blockers(
+    idea: str,
     target_confidence: int,
     confidence_score: int,
+    sources: list[Source],
+    findings: list[Finding],
     questions: list[OpenQuestion],
     hypotheses: list[Hypothesis],
     competitors: list[str],
@@ -55,5 +59,15 @@ def find_completion_blockers(
 
     if not competitors:
         blockers.append("nenhum concorrente relevante analisado")
+
+    blockers.extend(
+        deep_research_blockers(
+            evaluate_research_coverage(
+                idea=idea,
+                sources=sources,
+                findings=findings,
+            )
+        )
+    )
 
     return blockers

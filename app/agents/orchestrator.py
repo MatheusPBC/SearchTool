@@ -36,8 +36,11 @@ class ResearchOrchestrator:
             questions=questions,
         )
         blockers = find_completion_blockers(
+            idea=idea,
             target_confidence=target_confidence,
             confidence_score=confidence_score,
+            sources=sources,
+            findings=findings,
             questions=questions,
             hypotheses=hypotheses,
             competitors=competitors,
@@ -58,4 +61,3 @@ class ResearchOrchestrator:
             mvp=mvp,
             blockers=blockers,
         )
-

@@ -510,8 +510,11 @@ def recalculate_project_status(db: Session, project_id: UUID) -> ProjectReport |
         questions=report.critical_questions,
     )
     blockers = find_completion_blockers(
+        idea=report.idea,
         target_confidence=report.target_confidence,
         confidence_score=confidence_score,
+        sources=report.sources,
+        findings=report.findings,
         questions=report.critical_questions,
         hypotheses=report.hypotheses,
         competitors=report.competitors,

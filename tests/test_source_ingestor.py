@@ -31,8 +31,8 @@ def test_source_ingestor_uses_heuristic_by_default() -> None:
     finally:
         settings.llm_provider = previous_provider
 
-    assert extraction.findings
-    assert extraction.findings[0].evidence_level == "weak"
+    assert extraction.findings == []
+    assert "Fallback heuristico" in extraction.notes
 
 
 def test_source_ingestor_can_use_codex_cli_client() -> None:
@@ -51,4 +51,3 @@ def test_source_ingestor_can_use_codex_cli_client() -> None:
     assert extraction.findings[0].statement == "A API exige backoff quando retorna status 429."
     assert extraction.findings[0].evidence_level == "strong"
     assert extraction.findings[0].confidence_score == 92
-

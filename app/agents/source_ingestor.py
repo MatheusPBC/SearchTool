@@ -74,16 +74,8 @@ class SourceIngestor:
         )
 
     def _extract_with_heuristics(self, title: str, content: str) -> SourceExtraction:
-        snippet = " ".join(content.split())[:280]
         return SourceExtraction(
-            findings=[
-                Finding(
-                    statement=f"A fonte '{title}' foi adicionada e precisa de extracao assistida: {snippet}",
-                    evidence_level=EvidenceLevel.weak,
-                    source_titles=[title],
-                    confidence_score=45,
-                )
-            ],
+            findings=[],
             notes="Fallback heuristico usado; habilite LLM_PROVIDER=codex_cli para extracao semantica.",
         )
 
@@ -143,4 +135,3 @@ def _parse_evidence_level(value: str) -> EvidenceLevel | None:
         return EvidenceLevel(value)
     except ValueError:
         return None
-

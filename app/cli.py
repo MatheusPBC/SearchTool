@@ -68,6 +68,14 @@ def _build_parser() -> argparse.ArgumentParser:
     ingest.add_argument("--max-findings", type=int, default=5)
     ingest.set_defaults(handler=_ingest_source)
 
+    finding = subparsers.add_parser("create-finding")
+    finding.add_argument("project_id")
+    finding.add_argument("--statement", required=True)
+    finding.add_argument("--evidence-level", choices=["none", "weak", "moderate", "strong"], required=True)
+    finding.add_argument("--confidence-score", type=int, required=True)
+    finding.add_argument("--source-title", action="append", dest="source_titles", default=[])
+    finding.set_defaults(handler=_create_finding)
+
     answer = subparsers.add_parser("answer-question")
     answer.add_argument("project_id")
     answer.add_argument("question_id", type=int)
@@ -80,6 +88,11 @@ def _build_parser() -> argparse.ArgumentParser:
     hypothesis.add_argument("--evidence-level", choices=["none", "weak", "moderate", "strong"], required=True)
     hypothesis.add_argument("--confidence-score", type=int, required=True)
     hypothesis.set_defaults(handler=_update_hypothesis)
+
+    delete_finding = subparsers.add_parser("delete-finding")
+    delete_finding.add_argument("project_id")
+    delete_finding.add_argument("finding_id", type=int)
+    delete_finding.set_defaults(handler=_delete_finding)
 
     recalculate = subparsers.add_parser("recalculate")
     recalculate.add_argument("project_id")
@@ -139,6 +152,16 @@ def _answer_question(args: argparse.Namespace, service: ResearchService) -> dict
     )
 
 
+def _create_finding(args: argparse.Namespace, service: ResearchService) -> dict:
+    return service.create_finding(
+        _parse_uuid(args.project_id),
+        statement=args.statement,
+        evidence_level=args.evidence_level,
+        confidence_score=args.confidence_score,
+        source_titles=args.source_titles,
+    )
+
+
 def _update_hypothesis(args: argparse.Namespace, service: ResearchService) -> dict:
     return service.update_hypothesis(
         _parse_uuid(args.project_id),
@@ -146,6 +169,10 @@ def _update_hypothesis(args: argparse.Namespace, service: ResearchService) -> di
         evidence_level=args.evidence_level,
         confidence_score=args.confidence_score,
     )
+
+
+def _delete_finding(args: argparse.Namespace, service: ResearchService) -> dict:
+    return service.delete_finding(_parse_uuid(args.project_id), args.finding_id)
 
 
 def _recalculate(args: argparse.Namespace, service: ResearchService) -> dict:

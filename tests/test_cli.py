@@ -7,11 +7,11 @@ from uuid import uuid4
 
 
 def test_cli_project_flow() -> None:
-    tmp_path = Path("C:/tmp") / f"research-agent-cli-test-{uuid4()}"
+    tmp_path = Path(f"research-agent-cli-test-{uuid4()}")
     tmp_path.mkdir(parents=True, exist_ok=True)
 
     env = os.environ.copy()
-    env["DATABASE_URL"] = f"sqlite:///{tmp_path / 'cli.db'}"
+    env["DATABASE_URL"] = f"sqlite:///{(tmp_path / 'cli.db').as_posix()}"
     env["LLM_PROVIDER"] = "heuristic"
 
     create = _run_cli(
@@ -54,7 +54,23 @@ def test_cli_project_flow() -> None:
         env,
     )
     assert ingested["source"]["title"] == "Documento de arquitetura"
-    assert ingested["findings"]
+    assert ingested["findings"] == []
+
+    finding = _run_cli(
+        [
+            "create-finding",
+            project_id,
+            "--statement",
+            "Finding temporario para testar delecao.",
+            "--evidence-level",
+            "weak",
+            "--confidence-score",
+            "30",
+        ],
+        env,
+    )
+    deleted = _run_cli(["delete-finding", project_id, str(finding["id"])], env)
+    assert deleted["deleted"] is True
 
 
 def _run_cli(args: list[str], env: dict[str, str]) -> dict:

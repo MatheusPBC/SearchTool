@@ -349,6 +349,22 @@ def create_project_finding(
     )
 
 
+def delete_finding(db: Session, project_id: UUID, finding_id: int) -> bool:
+    finding = db.scalar(
+        select(FindingModel).where(
+            FindingModel.project_id == str(project_id),
+            FindingModel.id == finding_id,
+        )
+    )
+    if finding is None:
+        return False
+
+    db.delete(finding)
+    db.commit()
+    recalculate_project_status(db, project_id)
+    return True
+
+
 def ingest_project_source(
     db: Session,
     project_id: UUID,

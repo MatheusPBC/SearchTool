@@ -1,4 +1,5 @@
 .venv/
+.venv-codex/
 __pycache__/
 *.pyc
 .env
@@ -10,4 +11,6 @@ dist/
 build/
 .DS_Store
 research_mvp.db
+research-agent-*.db
+research-agent-*/
 *.log

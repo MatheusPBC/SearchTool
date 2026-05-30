@@ -1,9 +1,11 @@
 import os
+import tempfile
+from uuid import uuid4
 from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-test_db = Path("C:/tmp/research-agent-api-test.db")
+test_db = Path(tempfile.gettempdir()) / f"research-agent-api-test-{uuid4()}.db"
 test_db.unlink(missing_ok=True)
 os.environ["DATABASE_URL"] = f"sqlite:///{test_db}"
 os.environ["LLM_PROVIDER"] = "heuristic"
@@ -173,7 +175,7 @@ def test_source_can_be_ingested_into_findings() -> None:
     assert ingest_response.status_code == 200
     body = ingest_response.json()
     assert body["source"]["title"] == "Documentacao de limites da API"
-    assert body["findings"]
+    assert body["findings"] == []
     assert body["extraction_notes"]
 
 

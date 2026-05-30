@@ -115,6 +115,10 @@ def _tool_handlers() -> dict[str, Callable[[ResearchService, Json], Any]]:
             confidence_score=int(args["confidence_score"]),
             source_titles=[str(item) for item in args.get("source_titles", [])],
         ),
+        "delete_finding": lambda service, args: service.delete_finding(
+            _uuid(args, "project_id"),
+            int(args["finding_id"]),
+        ),
         "list_hypotheses": lambda service, args: service.list_hypotheses(_uuid(args, "project_id")),
         "update_hypothesis": lambda service, args: service.update_hypothesis(
             _uuid(args, "project_id"),
@@ -172,6 +176,10 @@ def _tools() -> list[Json]:
             "confidence_score": {"type": "integer", "minimum": 0, "maximum": 100},
             "source_titles": {"type": "array", "items": {"type": "string"}},
         }, ["project_id", "statement", "evidence_level", "confidence_score"]),
+        _tool("delete_finding", "Delete an incorrect or low-quality finding.", {
+            **_project_id_schema(),
+            "finding_id": {"type": "integer"},
+        }, ["project_id", "finding_id"]),
         _tool("list_hypotheses", "List project hypotheses.", _project_id_schema(), ["project_id"]),
         _tool("update_hypothesis", "Update evidence level and confidence for a hypothesis.", {
             **_project_id_schema(),
@@ -240,4 +248,3 @@ def _required_str(args: Json, key: str) -> str:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

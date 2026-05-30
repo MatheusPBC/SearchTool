@@ -7,6 +7,7 @@ from app.domain.repository import (
     answer_project_question,
     create_project_finding,
     create_project_source,
+    delete_finding,
     create_research_run,
     get_project_report,
     ingest_project_source,
@@ -154,6 +155,12 @@ class ResearchService:
             raise ValueError("Project not found")
         return finding.model_dump(mode="json")
 
+    def delete_finding(self, project_id: UUID, finding_id: int) -> dict:
+        deleted = delete_finding(self.db, project_id, finding_id)
+        if not deleted:
+            raise ValueError("Finding not found")
+        return {"deleted": True, "project_id": str(project_id), "finding_id": finding_id}
+
     def list_hypotheses(self, project_id: UUID) -> list[dict]:
         if get_project_report(self.db, project_id) is None:
             raise ValueError("Project not found")
@@ -261,4 +268,3 @@ class ResearchService:
         if report is None:
             raise ValueError("Project not found")
         return report.model_dump(mode="json")
-

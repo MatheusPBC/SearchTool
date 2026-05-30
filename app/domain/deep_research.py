@@ -67,115 +67,148 @@ def evaluate_research_coverage(
 
 
 def required_facets_for_idea(idea: str) -> list[ResearchFacet]:
-    normalized = idea.lower()
-    if any(token in normalized for token in ("path of exile", "poe", "mercado")):
-        return [
-            ResearchFacet(
-                "official_data_surface",
-                ("api", "public stash", "currency exchange", "developer docs", "rate limit"),
-                "APIs oficiais, limites, autenticacao e termos de uso.",
-            ),
-            ResearchFacet(
-                "patch_and_league_dynamics",
-                ("patch", "league", "season", "meta", "balance"),
-                "Como patches, ligas e balanceamento mudam oferta, demanda e preco.",
-            ),
-            ResearchFacet(
-                "build_meta_demand",
-                ("build", "skill", "meta build", "ladder", "poe.ninja"),
-                "Como builds e popularidade de skills afetam demanda por itens.",
-            ),
-            ResearchFacet(
-                "item_model_and_weights",
-                ("item weight", "mod weight", "affix", "modifier", "craft", "base type"),
-                "Tipos de item, mods, pesos, crafting e diferenca entre precificar itens distintos.",
-            ),
-            ResearchFacet(
-                "liquidity_and_manipulation",
-                ("liquidity", "volume", "price fixing", "fake listing", "spread"),
-                "Liquidez, manipulacao, listings falsos e preco executavel.",
-            ),
-            ResearchFacet(
-                "competitors_and_repos",
-                ("awakened", "poe.ninja", "github", "repository", "trade macro"),
-                "Ferramentas, repositorios e alternativas usadas pela comunidade.",
-            ),
-            ResearchFacet(
-                "player_workflows",
-                ("bulk", "live search", "whisper", "stash", "trade"),
-                "Fluxos reais de compra/venda, bulk trading e friccoes de usuario.",
-            ),
-        ]
-
-    if any(token in normalized for token in ("hacker", "hacking", "cyber", "seguranca")):
-        return [
-            ResearchFacet(
-                "legal_and_scope",
-                ("authorized", "autorizacao", "scope", "disclosure", "cisa", "legal"),
-                "Autorizacao, disclosure responsavel, limites legais e regras de escopo.",
-            ),
-            ResearchFacet(
-                "skills_framework",
-                ("nice", "framework", "competenc", "knowledge", "skill", "task"),
-                "Competencias, conhecimentos e tarefas profissionais esperadas.",
-            ),
-            ResearchFacet(
-                "safe_labs_and_ctfs",
-                ("lab", "ctf", "sandbox", "academy", "controlled environment"),
-                "Ambientes seguros de pratica e exercicios controlados.",
-            ),
-            ResearchFacet(
-                "web_testing_methodology",
-                ("owasp", "wstg", "testing guide", "web security"),
-                "Metodologia defensiva de testes web.",
-            ),
-            ResearchFacet(
-                "reporting_and_communication",
-                ("report", "writeup", "reproduc", "impact", "mitigation"),
-                "Qualidade de reports, reproducibilidade, impacto e mitigacao.",
-            ),
-            ResearchFacet(
-                "competitors_and_learning_platforms",
-                ("portswigger", "hack the box", "tryhackme", "hackerone", "academy"),
-                "Plataformas concorrentes, trilhas, labs e modelos de progresso.",
-            ),
-            ResearchFacet(
-                "assessment_and_progress",
-                ("assessment", "rubric", "score", "badge", "progress"),
-                "Diagnostico, rubricas, progresso e avaliacao por competencia.",
-            ),
-        ]
-
+    # These facets are intentionally domain-agnostic. They force the agent to ask
+    # "what kind of thing is this domain made of?" instead of relying on templates
+    # for specific domains such as games, security, finance, or devtools.
     return [
         ResearchFacet(
-            "official_sources",
-            ("official", "documentation", "api", "standard", "policy"),
-            "Fontes oficiais, politicas, padroes e documentacao primaria.",
+            "primary_authoritative_sources",
+            (
+                "official",
+                "documentation",
+                "docs",
+                "api",
+                "standard",
+                "specification",
+                "policy",
+                "terms",
+            ),
+            "Fontes primarias, documentacao oficial, normas, politicas e limites de uso.",
         ),
         ResearchFacet(
-            "competitors",
-            ("competitor", "alternative", "github", "repository", "platform"),
-            "Concorrentes, alternativas e implementacoes existentes.",
+            "domain_object_taxonomy",
+            (
+                "taxonomy",
+                "type",
+                "class",
+                "category",
+                "attribute",
+                "property",
+                "modifier",
+                "weight",
+                "item",
+                "asset",
+                "entity",
+                "skill",
+                "competency",
+            ),
+            "Quais objetos existem no dominio, quais atributos os diferenciam e quais mudam valor/risco.",
         ),
         ResearchFacet(
-            "user_workflows",
-            ("workflow", "pain", "user", "job", "persona"),
-            "Usuarios, dores, fluxos e jobs-to-be-done.",
+            "causal_and_temporal_dynamics",
+            (
+                "trend",
+                "change",
+                "patch",
+                "release",
+                "season",
+                "cycle",
+                "meta",
+                "demand",
+                "supply",
+                "feedback loop",
+                "causal",
+            ),
+            "O que muda ao longo do tempo e quais relacoes de causa e efeito alteram o MVP.",
         ),
         ResearchFacet(
-            "data_and_integrations",
-            ("data", "api", "integration", "crawler", "source"),
-            "Dados, integracoes, disponibilidade e confiabilidade.",
+            "user_workflows_and_jobs",
+            (
+                "workflow",
+                "pain",
+                "user",
+                "persona",
+                "job",
+                "journey",
+                "process",
+                "manual",
+                "workaround",
+            ),
+            "Fluxos reais, dores, usuarios, jobs-to-be-done e workarounds atuais.",
         ),
         ResearchFacet(
-            "evaluation_metrics",
-            ("metric", "score", "accuracy", "quality", "success"),
-            "Metricas de sucesso, qualidade e validacao.",
+            "data_surfaces_and_integrations",
+            (
+                "data",
+                "dataset",
+                "api",
+                "integration",
+                "crawler",
+                "source",
+                "schema",
+                "database",
+                "event",
+                "rate limit",
+            ),
+            "Dados disponiveis, schemas, integracoes, confiabilidade, custos e limites.",
+        ),
+        ResearchFacet(
+            "existing_tools_and_competitors",
+            (
+                "competitor",
+                "alternative",
+                "platform",
+                "tool",
+                "product",
+                "marketplace",
+                "academy",
+                "service",
+            ),
+            "Concorrentes, substitutos, produtos, plataformas e ferramentas ja usadas.",
+        ),
+        ResearchFacet(
+            "open_implementations_and_repos",
+            (
+                "github",
+                "repository",
+                "repo",
+                "open source",
+                "implementation",
+                "library",
+                "package",
+                "sdk",
+            ),
+            "Repositorios, bibliotecas, SDKs e implementacoes abertas que revelam conhecimento pratico.",
+        ),
+        ResearchFacet(
+            "evaluation_metrics_and_ground_truth",
+            (
+                "metric",
+                "score",
+                "accuracy",
+                "quality",
+                "benchmark",
+                "ground truth",
+                "validation",
+                "rubric",
+                "success",
+            ),
+            "Metricas, benchmark, ground truth, rubricas e criterios de sucesso do MVP.",
         ),
         ResearchFacet(
             "risks_and_constraints",
-            ("risk", "legal", "technical", "constraint", "limitation"),
-            "Riscos, restricoes tecnicas, legais e operacionais.",
+            (
+                "risk",
+                "legal",
+                "ethical",
+                "security",
+                "technical",
+                "constraint",
+                "limitation",
+                "abuse",
+                "compliance",
+            ),
+            "Riscos, restricoes tecnicas, legais, eticas, operacionais e vetores de abuso.",
         ),
     ]
 

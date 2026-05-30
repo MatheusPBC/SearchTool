@@ -2,7 +2,7 @@ from app.domain.deep_research import evaluate_research_coverage, deep_research_b
 from app.domain.schemas import EvidenceLevel, Finding, Source
 
 
-def test_poe_research_requires_domain_specific_facets() -> None:
+def test_deep_research_uses_generic_facets_to_catch_domain_depth() -> None:
     coverage = evaluate_research_coverage(
         idea="Quero criar um sistema de mercado para Path of Exile",
         sources=[
@@ -31,9 +31,10 @@ def test_poe_research_requires_domain_specific_facets() -> None:
         ],
     )
 
-    assert "official_data_surface" in coverage.covered_facets
-    assert "patch_and_league_dynamics" in coverage.covered_facets
-    assert "item_model_and_weights" in coverage.covered_facets
+    assert "primary_authoritative_sources" in coverage.covered_facets
+    assert "causal_and_temporal_dynamics" in coverage.covered_facets
+    assert "domain_object_taxonomy" in coverage.covered_facets
+    assert "open_implementations_and_repos" in coverage.covered_facets
     assert coverage.concrete_source_count == 2
 
 

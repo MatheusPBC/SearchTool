@@ -85,6 +85,7 @@ def _tool_handlers() -> dict[str, Callable[[ResearchService, Json], Any]]:
         ),
         "plan_next_run": lambda service, args: service.plan_next_run(_uuid(args, "project_id")),
         "next_action": lambda service, args: service.next_action(_uuid(args, "project_id")),
+        "advance_workflow": lambda service, args: service.advance_workflow(_uuid(args, "project_id")),
         "list_runs": lambda service, args: service.list_runs(_uuid(args, "project_id")),
         "create_run": lambda service, args: service.create_run(
             _uuid(args, "project_id"),
@@ -146,6 +147,7 @@ def _tools() -> list[Json]:
         }, ["project_id", "question_id"]),
         _tool("plan_next_run", "Plan the next research run.", _project_id_schema(), ["project_id"]),
         _tool("next_action", "Plan and return the recommended next action for an agent.", _project_id_schema(), ["project_id"]),
+        _tool("advance_workflow", "Advance the autonomous research workflow and return the next executable stage.", _project_id_schema(), ["project_id"]),
         _tool("list_runs", "List project research runs.", _project_id_schema(), ["project_id"]),
         _tool("create_run", "Create a manual research run.", {
             **_project_id_schema(),

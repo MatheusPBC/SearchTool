@@ -102,6 +102,10 @@ def _build_parser() -> argparse.ArgumentParser:
     next_action.add_argument("project_id")
     next_action.set_defaults(handler=_next_action)
 
+    workflow = subparsers.add_parser("advance-workflow")
+    workflow.add_argument("project_id")
+    workflow.set_defaults(handler=_advance_workflow)
+
     return parser
 
 
@@ -181,6 +185,10 @@ def _recalculate(args: argparse.Namespace, service: ResearchService) -> dict:
 
 def _next_action(args: argparse.Namespace, service: ResearchService) -> dict:
     return service.next_action(_parse_uuid(args.project_id))
+
+
+def _advance_workflow(args: argparse.Namespace, service: ResearchService) -> dict:
+    return service.advance_workflow(_parse_uuid(args.project_id))
 
 
 def _parse_uuid(value: str) -> UUID:

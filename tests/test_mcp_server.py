@@ -48,6 +48,7 @@ def test_mcp_server_lists_tools_and_calls_create_project() -> None:
     assert "create_project" in tool_names
     assert "ingest_source" in tool_names
     assert "delete_finding" in tool_names
+    assert "advance_workflow" in tool_names
 
     content = responses[2]["result"]["content"][0]["text"]
     created = json.loads(content)

@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 
 from app.agents.orchestrator import ResearchOrchestrator
+from app.agents.workflow import build_workflow_step
 from app.domain.repository import (
     answer_project_question,
     create_project_finding,
@@ -262,6 +263,21 @@ class ResearchService:
                 "Then call ingest_source for each relevant source and recalculate."
             ),
         }
+
+    def advance_workflow(self, project_id: UUID) -> dict:
+        report = recalculate_project_status(self.db, project_id)
+        if report is None:
+            raise ValueError("Project not found")
+
+        open_questions = list_project_questions(self.db, project_id)
+        open_questions = [question for question in open_questions if not question.answered]
+        planned = None
+        if not report.can_finalize:
+            planned = plan_next_research_run(self.db, project_id)
+            if planned is None:
+                raise ValueError("Could not plan next run")
+
+        return build_workflow_step(report, open_questions, planned)
 
     def recalculate(self, project_id: UUID) -> dict:
         report = recalculate_project_status(self.db, project_id)

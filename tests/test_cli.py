@@ -33,6 +33,12 @@ def test_cli_project_flow() -> None:
     assert next_action["recommended_next_run"]
     assert next_action["suggested_agent_instruction"]
 
+    workflow = _run_cli(["advance-workflow", project_id], env)
+    assert workflow["status"] == "needs_research"
+    assert workflow["current_stage"]
+    assert workflow["source_discovery_plan"]
+    assert workflow["tool_sequence"]
+
     ingested = _run_cli(
         [
             "ingest-source",
